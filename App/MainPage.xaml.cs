@@ -25,17 +25,17 @@ namespace App
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private Device device;
+        Mesh[] meshes;
+        Camera mera = new Camera();
+
         public MainPage()
         {
             this.InitializeComponent();
             this.Loaded += Page_Loaded;
         }
 
-        private Device device;
-        Mesh mesh = new Mesh("Cube", 8);
-        Camera mera = new Camera();
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // Choose the back buffer resolution here
             WriteableBitmap bmp = new WriteableBitmap(640, 480);
@@ -45,14 +45,7 @@ namespace App
             // Our Image XAML control
             frontBuffer.Source = bmp;
 
-            mesh.Vertices[0] = new Vector3(-1, 1, 1);
-            mesh.Vertices[1] = new Vector3(1, 1, 1);
-            mesh.Vertices[2] = new Vector3(-1, -1, 1);
-            mesh.Vertices[3] = new Vector3(-1, -1, -1);
-            mesh.Vertices[4] = new Vector3(-1, 1, -1);
-            mesh.Vertices[5] = new Vector3(1, 1, -1);
-            mesh.Vertices[6] = new Vector3(1, -1, 1);
-            mesh.Vertices[7] = new Vector3(1, -1, -1);
+            meshes = await device.LoadJSONFileAsync("monkey.babylon");
 
             mera.Position = new Vector3(0, 0, 10.0f);
             mera.Target = Vector3.Zero;
@@ -66,11 +59,14 @@ namespace App
         {
             device.Clear(0, 0, 0, 255);
 
-            // rotating slightly the cube during each frame rendered
-            mesh.Rotation = new Vector3(mesh.Rotation.X + 0.01f, mesh.Rotation.Y + 0.01f, mesh.Rotation.Z);
+            foreach (var mesh in meshes)
+            {
+                // rotating slightly the meshes during each frame rendered
+                mesh.Rotation = new Vector3(mesh.Rotation.X + 0.01f, mesh.Rotation.Y + 0.01f, mesh.Rotation.Z);
+            }
 
             // Doing the various matrix operations
-            device.Render(mera, mesh);
+            device.Render(mera, meshes);
             // Flushing the back buffer into the front buffer
             device.Present();
         }
