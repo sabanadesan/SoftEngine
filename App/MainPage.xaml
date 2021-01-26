@@ -9,6 +9,10 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Image x:Name="frontBuffer"/>
+        <StackPanel>
+            <TextBox x:Name="fps" MaxHeight="172" Width="300"/>
+            <Image x:Name="frontBuffer"/>
+        </StackPanel>
+
     </Grid>
 </Page>
